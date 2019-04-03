@@ -2,6 +2,8 @@ package com.remedial.tractorstore.controller;
 
 import com.remedial.tractorstore.dto.FotoDto;
 import com.remedial.tractorstore.model.Foto;
+import com.remedial.tractorstore.service.FotoService;
+import com.remedial.tractorstore.service.GenericService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.stereotype.Controller;
@@ -35,5 +37,10 @@ public class FotoController extends GenericController<Foto, FotoDto>{
                                @FormDataParam("file") FormDataContentDisposition fileDisposition) {
         service.saveImage(Long.valueOf(id), file);
         return Response.ok("Data uploaded successfully !!").build();
+    }
+
+    @Override
+    protected GenericService getService() {
+        return service;
     }
 }
