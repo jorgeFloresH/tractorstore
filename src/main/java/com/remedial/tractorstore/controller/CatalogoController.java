@@ -1,25 +1,35 @@
 package com.remedial.tractorstore.controller;
 
-import com.remedial.tractorstore.repositories.CatalogoRepository;
+import com.remedial.tractorstore.dto.CatalogoDto;
+import com.remedial.tractorstore.model.Catalogo;
+import com.remedial.tractorstore.service.CatalogoService;
+import com.remedial.tractorstore.service.GenericService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.util.StringUtils;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Controller
+@Path("/catalogos")
+@Produces(MediaType.APPLICATION_JSON)
+public class CatalogoController extends GenericController<Catalogo, CatalogoDto> {
 
-public class CatalogoController {
+    private CatalogoService service;
 
-    private CatalogoRepository repository;
-
-    public CatalogoController(CatalogoRepository repository) {
-        this.repository = repository;
+    public CatalogoController(CatalogoService service) {
+        this.service= service;
     }
 
-    @RequestMapping("/catalogos")
-    public String getCatalogos(Model model) {
-        model.addAttribute("catalogos", repository.findAll());
-        return "catalogos";
+    @Override
+    public GenericService getService(){return service;}
+
+    @GET
+    public List<Catalogo> getCategories(@QueryParam(value = "code") String code) {
+        return StringUtils.isEmpty(code) ? service.findAll() : service.findByCode(code);
     }
 }
