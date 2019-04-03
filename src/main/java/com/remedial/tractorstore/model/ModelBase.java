@@ -1,5 +1,7 @@
 package com.remedial.tractorstore.model;
 
+import com.remedial.tractorstore.dto.DtoBase;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -9,56 +11,64 @@ import java.util.Date;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class ModelBase {
-
+@SuppressWarnings("rawtypes")
+public class ModelBase<D extends DtoBase> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(nullable = false, unique = true)
+    private Long id;
+
 
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private Date createdOn;
+    private Date createdAt;
 
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(insertable = false)
-    private Date updateOn;
+    private Date updatedAt;
 
-    //añadir campo requerido a baseModel
     @Version
     @Column(nullable = false)
-    private Long version;
+    private long version;
 
-    public Date getCreatedOn() {
-        return createdOn;
-    }
 
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public Date getUpdateOn() {
-        return updateOn;
-    }
-
-    public void setUpdateOn(Date updateOn) {
-        this.updateOn = updateOn;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public ModelBase toDomain(D element, ModelMapper mapper) {
+        mapper.map(element, this);
+        return this;
+    }
 }
+
